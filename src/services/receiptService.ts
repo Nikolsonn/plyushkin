@@ -9,7 +9,8 @@ import { preprocessImage, validateImage } from '../utils/imagePreprocess';
 import { extractText } from '../ocr/ocrService';
 import { parseReceipt, type ParsedReceipt } from '../parser/receiptParser';
 import { detectStore } from '../parser/storeDetector';
-import { resolveProduct } from './productService';
+import { normalizeProductName } from '../parser/productNormalizer';
+import { resolveProduct, searchProducts } from './productService';
 import { logger } from '../utils/logger';
 
 /**
@@ -176,6 +177,23 @@ export function getPriceHistory(normalizedName: string) {
     .where(eq(products.normalizedName, normalizedName))
     .orderBy(desc(receipts.datetime))
     .all();
+}
+
+/** Get price history with fuzzy product matching */
+export function getPriceHistoryFuzzy(query: string) {
+  const normalized = normalizeProductName(query);
+  let history = getPriceHistory(normalized);
+  let product = null;
+
+  if (history.length === 0) {
+    const matches = searchProducts(query);
+    if (matches.length > 0) {
+      product = matches[0];
+      history = getPriceHistory(product.normalizedName);
+    }
+  }
+
+  return { history, product };
 }
 
 /** Get distinct stores */

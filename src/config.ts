@@ -11,12 +11,17 @@ function env(key: string, fallback?: string): string {
 export const config = {
   telegram: {
     token: env('TELEGRAM_BOT_TOKEN'),
+    allowedChatIds: (process.env['ALLOWED_CHAT_IDS'] ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map(Number),
   },
   api: {
     port: parseInt(env('API_PORT', '3000'), 10),
   },
   db: {
-    path: path.resolve(env('DB_PATH', './data/receipt-tracker.db')),
+    path: path.resolve(env('DB_PATH', './data/plyushkin.db')),
   },
   images: {
     dir: path.resolve(env('IMAGE_DIR', './data/images')),
