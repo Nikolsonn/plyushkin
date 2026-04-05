@@ -1,10 +1,10 @@
 {
-  "name": "receipt-tracker",
+  "name": "plyushkin",
   "version": "0.0.1",
   "description": "Receipt price tracker for Raspberry Pi — extracts product prices from receipt photos via Telegram bot",
   "main": "dist/main.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npx --no-install tsc",
     "start": "node --max-old-space-size=180 --optimize-for-size dist/main.js",
     "dev": "tsx watch src/main.ts",
     "db:migrate": "node dist/database/migrate.js",
@@ -13,28 +13,28 @@
     "test:watch": "vitest"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "license": "MIT",
   "dependencies": {
     "better-sqlite3": "11.7.0",
     "drizzle-orm": "0.38.0",
-    "fastify": "5.2.0",
-    "node-telegram-bot-api": "0.66.0",
+    "fastify": "~5.8.4",
+    "node-telegram-bot-api": "~0.67.0",
     "pino": "9.6.0",
     "sharp": "0.33.0",
     "tesseract.js": "5.1.1"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "~10.0.1",
     "@types/better-sqlite3": "7.6.12",
     "@types/node": "22.0.0",
     "@types/node-telegram-bot-api": "0.64.7",
-    "drizzle-kit": "0.30.0",
-    "eslint": "^10.2.0",
-    "tsx": "4.19.0",
+    "drizzle-kit": "~0.18.1",
+    "eslint": "~10.2.0",
+    "tsx": "~4.21.0",
     "typescript": "5.7.3",
-    "typescript-eslint": "^8.58.0",
-    "vitest": "2.1.0"
+    "typescript-eslint": "~8.58.0",
+    "vitest": "~4.1.2"
   }
 }
