@@ -67,7 +67,7 @@ Set `OCR_ENGINE=native` (default) or `OCR_ENGINE=tesseractjs` in `.env`.
 
 - No separate database server process (saves ~50MB RAM)
 - WAL mode enables concurrent reads during writes
-- Single-file database, trivial to back up (`cp data/receipt-tracker.db backup.db`)
+- Single-file database, trivial to back up (`cp data/plyushkin.db backup.db`)
 - Indexes on `product_id`, `receipt_id`, `normalized_name`, `store`, `datetime`
 
 ### Telegram: Long-polling over webhooks
@@ -200,8 +200,8 @@ tesseract --version  # tesseract 5.x
 ```bash
 # Clone or copy project
 cd /home/pi
-git clone <your-repo-url> receipt-tracker
-cd receipt-tracker
+git clone <your-repo-url> plyushkin
+cd plyushkin
 
 # Install Node.js dependencies
 npm install
@@ -233,7 +233,35 @@ npm run build
 npm start
 ```
 
-### 5. System Optimization (Optional)
+### 5. Run in Docker (Alternative)
+
+```bash
+# Build the image
+docker build -t plyushkin .
+
+# Run the container
+docker run -d \
+  -e TELEGRAM_BOT_TOKEN=your-token \
+  -v ./data:/app/data \
+  -p 3000:3000 \
+  --name plyushkin \
+  plyushkin
+```
+
+The image includes native Tesseract with Latvian and English languages. The `./data` volume persists the SQLite database and receipt images.
+
+```bash
+# View logs
+docker logs -f plyushkin
+
+# Stop
+docker stop plyushkin
+
+# Restart
+docker restart plyushkin
+```
+
+### 6. System Optimization (Optional)
 
 ```bash
 # Reduce GPU memory allocation (more RAM for Node.js)
@@ -251,24 +279,24 @@ echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governo
 
 ```bash
 # Copy service file
-sudo cp receipt-tracker.service /etc/systemd/system/
+sudo cp plyushkin.service /etc/systemd/system/
 
-# Edit paths if needed (default assumes /home/pi/receipt-tracker)
-sudo nano /etc/systemd/system/receipt-tracker.service
+# Edit paths if needed (default assumes /home/pi/plyushkin)
+sudo nano /etc/systemd/system/plyushkin.service
 
 # Enable and start
 sudo systemctl daemon-reload
-sudo systemctl enable receipt-tracker
-sudo systemctl start receipt-tracker
+sudo systemctl enable plyushkin
+sudo systemctl start plyushkin
 
 # Check status
-sudo systemctl status receipt-tracker
+sudo systemctl status plyushkin
 
 # View logs
-journalctl -u receipt-tracker -f
+journalctl -u plyushkin -f
 
 # Restart after changes
-sudo systemctl restart receipt-tracker
+sudo systemctl restart plyushkin
 ```
 
 ## OCR Improvement Strategies
@@ -331,10 +359,10 @@ Adding a new store: add an entry to `STORES` array in `src/parser/storeDetector.
 
 ```bash
 # Simple file copy (SQLite is a single file)
-cp data/receipt-tracker.db backups/receipt-tracker-$(date +%Y%m%d).db
+cp data/plyushkin.db backups/plyushkin-$(date +%Y%m%d).db
 
 # Or use SQLite backup API
-sqlite3 data/receipt-tracker.db ".backup backups/receipt-tracker-$(date +%Y%m%d).db"
+sqlite3 data/plyushkin.db ".backup backups/plyushkin-$(date +%Y%m%d).db"
 ```
 
 ## License
