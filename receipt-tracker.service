@@ -1,0 +1,32 @@
+[Unit]
+Description=Receipt Price Tracker
+Documentation=https://github.com/your-username/receipt-tracker
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/receipt-tracker
+ExecStart=/usr/bin/node --max-old-space-size=180 --optimize-for-size dist/main.js
+Restart=always
+RestartSec=10
+
+# Environment
+Environment=NODE_ENV=production
+EnvironmentFile=/home/pi/receipt-tracker/.env
+
+# Resource limits for Raspberry Pi 3
+MemoryMax=200M
+CPUQuota=80%
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Logging — pino outputs to stdout, journald captures it
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=receipt-tracker
+
+[Install]
+WantedBy=multi-user.target
